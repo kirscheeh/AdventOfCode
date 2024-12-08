@@ -1,0 +1,10 @@
+[package]
+name = "AdventofRustcode2023"
+version = "0.1.0"
+
+[[bin]]
+name="day01"
+path="2023/rust/trebuchet.rs"
+
+[dependencies]
+regex = "1.11.1"
