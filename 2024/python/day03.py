@@ -12,7 +12,7 @@ for operation in re.finditer(re.compile(r"(mul\(([0-9]{1,3})\,([0-9]{1,3})\))|(d
         case "don't":
             enabled = False 
         case "do":
-            enabled=True
+            enabled = True
         case _:
             part1 += prod(map(int, re.findall("([0-9]{1,3})", operation.group())))
 
