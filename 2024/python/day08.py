@@ -25,7 +25,7 @@ for antenna, positions in d.items():
     for one, two in pairs:
         distance = two-one
         for tmp, mathy in zip([two+distance, one-distance], ['+', '-']):
-            part1.append(tmp)
+            part1.add(tmp)
             while tmp in grid.keys():
                 if not tmp in antennas:
                     part2.add(tmp)
@@ -37,5 +37,5 @@ for antenna, positions in d.items():
                 
 
 
-print("Part 1", len([antinode for antinode in part1 if antinode in grid.keys()])+)
+print("Part 1", len([antinode for antinode in part1 if antinode in grid.keys()]))
 print("Part 2", len([antinode for antinode in part2 if antinode in grid.keys()])+len(antennas))

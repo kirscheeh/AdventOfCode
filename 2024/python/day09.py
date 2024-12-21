@@ -22,10 +22,10 @@ def fill_blocks_recursively(data):
         return data
     else:
         if data[-1] == ".":
-            return fill_blocks(data[:-1])
+            return fill_blocks_recursively(data[:-1])
         else:
             data[data.index(".")] = data[-1]
-            return fill_blocks(data[:-1])
+            return fill_blocks_recursively(data[:-1])
 
 def fill_blocks_stupidly(data):
     while "." in data:

@@ -13,5 +13,5 @@ def input2complexdict(puzzle):
     result = {x+1j*y:0 for x,y in zip(range(len(puzzle)), range(len(puzzle[0])))}
     for row, content in enumerate(puzzle):
         for gollum, letter in enumerate(content):
-            result[row+1j*gollum] = letter
+            result[gollum+1j*row] = letter
     return result
