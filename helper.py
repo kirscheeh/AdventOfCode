@@ -1,54 +1,30 @@
-import re
-from itertools import count
-from math import prod
+from collections import defaultdict
+from heapq import heappop, heappush
+
+grid = {i+j*1j: c for i,r in enumerate(open("inputs/2024/day16.txt"))
+                  for j,c in enumerate(r) if c != '#'}
+
+start, = (p for p in grid if grid[p] == 'S')
+
+seen = []
+best = 1e9
+dist = defaultdict(lambda: 1e9)
+todo = [(0, t:=0, start, 1j, [start])]
+
+while todo:
+    val, _, pos, dir, path = heappop(todo)
+
+    if val > dist[pos, dir]: continue
+    else: dist[pos, dir] = val
+
+    if grid[pos] == 'E' and val <= best:
+        seen += path
+        best = val
+
+    for r, v in (1, 1), (+1j, 1001), (-1j, 1001):
+        v, t, p, d = val+v, t+1, pos + dir*r, dir*r
+        if p not in grid: continue
+        heappush(todo, (v, t, p, d, path + [p]))
 
 
-def parse_input():
-    with open("inputs/2024/day14.txt", "r") as file:
-        data = file.read()
-    pattern = r"p=(-?\d+),(-?\d+) v=(-?\d+),(-?\d+)"
-    return [list(map(int, x)) for x in re.findall(pattern, data)]
-
-
-ROBOTS = parse_input()
-N, M = 103, 101
-
-
-def step(j, i, dj, di, t):
-    di *= t
-    dj *= t
-    i = (i + di) % N
-    j = (j + dj) % M
-    return i, j
-
-
-def draw(positions):
-    grid = [["."] * M for _ in range(N)]
-    for i, j in positions:
-        grid[i][j] = "\u2588"
-    print("\n".join("".join(row) for row in grid))
-
-
-def part_one():
-    quadrants = [0] * 4
-    for i, j in (step(*robot, 100) for robot in ROBOTS):
-        n = (N >> 1) + 1
-        m = (M >> 1) + 1
-        x, r = divmod(i, n)
-        y, rr = divmod(j, m)
-        if r == n - 1 or rr == m - 1:
-            continue
-        quadrants[x * 2 + y] += 1
-    return prod(quadrants)
-
-
-def part_two():
-    for t in count():
-        cur = {step(*robot, t) for robot in ROBOTS}
-        if len(cur) == len(ROBOTS):
-            draw(cur)
-            return t
-
-
-print(f"Part 1: {part_one()}")
-print(f"Part 2: {part_two()}")
+print(best, len(set(seen)))
