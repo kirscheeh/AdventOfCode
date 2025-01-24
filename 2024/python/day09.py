@@ -1,97 +1,92 @@
-import re
-from collections import defaultdict
+import heapq
+data = open("/home/kirscheeh/repositories/AdventOfCode/inputs/2024/day09.txt").read().strip()
 
-data = open("inputs/2024/day09.txt").read()
+def decode_part1(data:str) -> list:
+    fileID = 0
+    disk = []
+    for index, sign in enumerate(data):
+        for i in range(int(sign)):
+            if index % 2: # free space
+                disk.append(".")
+            else:
+                disk.append(fileID)
+        if not index % 2:
+            fileID += 1
+    return disk
 
-def decode(data):
-    result = []
-    block_number = 0
-    for counter, sign in enumerate(data):
-        print(counter)
-        if counter % 2 == 1:
-            if not int(sign) == 0:
-                result.extend(["."*int(sign)])
-        else:
-            result.extend([str(block_number)]*int(sign))
-            block_number += 1
-
-    return list(result) 
-
-def fill_blocks_recursively(data):
-    if data.count(".") == 0:
-        return data
-    else:
-        if data[-1] == ".":
-            return fill_blocks_recursively(data[:-1])
-        else:
-            data[data.index(".")] = data[-1]
-            return fill_blocks_recursively(data[:-1])
-
-def fill_blocks_stupidly(data):
-    while "." in data:
-        if not data[-1] == ".":
-            dot = data.index(".")
-            data[dot] = data[-1]
-        data = data[:-1]
-    return data
-
-def fill_blocks_fast(data):
-
-    size_of_blocks = defaultdict(int)
-    
-    for block in data:
-        if block.isdigit():
-            size_of_blocks[block] +=1
-
-    size_of_blocks = dict(sorted(size_of_blocks.items(), key=lambda item: int(item[0]), reverse=True))
-
-    lengths_of_free_space = [len(item) for item in data if not item.isdigit()]
-
-    for blockID, block_length in size_of_blocks.items():
-        if block_length > max(lengths_of_free_space):
-            continue
-        for index, item in enumerate(data):
-            print(blockID, index)
-            if not item.isdigit():
-                starting_index = data.index(blockID)
-                if len(item) >= block_length and index <= starting_index:
-                    # replace old block by .
-                    stop_index = starting_index+block_length
-                    data[starting_index] = "."*block_length
-
-                    data = data[:starting_index+1] + data[stop_index:]
-
-                    if not len(item) == block_length:
-                        data = data[:index] + [str(blockID)]*block_length + ["."*(len(item)-block_length)] + data[index+1:]
-                    else: 
-                        data = data[:index] + [str(blockID)]*block_length + data[index+1:]
-                    lengths_of_free_space.remove(len(item))
-                    break
-                elif index > starting_index:
-                    break
-
-    return "".join(data)
-  
-
-def add_empty_spaces(data, filled_data):
-    return data + ["."]*(len(filled_data)-len(data))
-
-def filesystem_checksum(data):
-
-    data = [x for x in data if  x != ""]
+def checksum(disk:list) -> int:
     result = 0
-    for index, fileID in enumerate(data):
-        if fileID == ".":
-            continue
-        result += index*int(fileID)
+    for index, elem in enumerate(disk):
+        if elem == ".":
+            return result
+        result = result + index*elem
     return result
 
-decoded_data = decode(data)
-print("Hello")
+def solve_part1(disk:list) -> list:
+    for idx_block, elem in enumerate(disk[::-1]):
+        if isinstance(elem, int):
+            idx_free_space = disk.index(".")
+            idx_block = len(disk) - idx_block -1
+            if idx_free_space < idx_block:
+                disk[idx_block], disk[idx_free_space] = disk[idx_free_space], disk[idx_block]
+    return disk
+print("Part 1", checksum(solve_part1(decode_part1(data))))
 
-#filled_data = fill_blocks(decoded_data)
-#print("Part 1", filesystem_checksum(filled_data))
+def decode_part2(data:str) -> dict:
+    fileID = 0
+    disk_blocks = {}
+    free_spaces = {x:[] for x in range(0,10)}
+    free_spaces2 = []
+    index = 0
+    for idx, sign in enumerate(data):
+        if idx % 2: # free space
+            heapq.heappush(free_spaces[int(sign)], index)
+            heapq.heappush(free_spaces2, (index, -int(sign)))
+        else:
+            disk_blocks[fileID] = (index, int(sign))
+            fileID += 1
+        index += int(sign)
 
-part2 = fill_blocks_fast(decoded_data)
+    return disk_blocks, free_spaces, free_spaces2
 
-print("Part 2", filesystem_checksum(part2))
+def checksum2(d):
+    result = 0
+    for fileID, (index, length) in d.items():
+        for i in range(index, index+length):
+            result = result + i*fileID
+
+    return result
+
+def printit(d):
+    result = ["."]*100
+
+    for fileID, (index, length) in d.items():
+        for i in range(index, index+length):
+            result[i] = str(fileID)
+    print(result)
+
+disk_blocks, free_spaces, free_spaces2 = decode_part2(data)
+def try_t(disk_blocks):
+
+    disk_blocks, free_spaces, free_spaces2 = decode_part2(data)
+    disk_blocks2 = disk_blocks.copy()
+    for fileID, (block_index, block_length) in dict(sorted(disk_blocks.items(), reverse=True)).items():
+        free_spaces3 = []
+        not_moved = True
+        while free_spaces2:
+            space_index, space_length = heapq.heappop(free_spaces2)
+            if not_moved and abs(space_length) >= block_length and space_index < block_index:
+                remaining_length = abs(space_length)-block_length
+
+                disk_blocks[fileID] = (space_index, block_length)
+
+                if remaining_length:
+                    heapq.heappush(free_spaces3, (space_index+block_length, -remaining_length))
+                not_moved = False
+            else:
+                heapq.heappush(free_spaces3, (space_index, space_length))
+        free_spaces2 = free_spaces3.copy()
+    print("Part 2", checksum2(disk_blocks))
+
+
+try_t(disk_blocks)
