@@ -6,8 +6,6 @@ fn main() {
     println!("{out1}");
     let out2 = generate_new(&out1, true);
     println!("{out2}");
-
-
 }
 
 fn increase(pw:Vec<u8>) -> Vec<u8> {
@@ -52,8 +50,6 @@ fn to_str(password: Vec<u8>) -> String {
     }
    pw
 }
-
-
 
 fn increasing_straight(password:&Vec<u8>) -> bool {
     password.windows(3).any(|triple| {
