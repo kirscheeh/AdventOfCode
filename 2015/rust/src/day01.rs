@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let contents = fs::read_to_string("inputs/day01.txt")
+    let contents = fs::read_to_string("inputs/2015/day01.txt")
         .expect("Should have been able to read the file");
 
     let up_floors = contents.chars().filter(|c| *c == '(').count();
