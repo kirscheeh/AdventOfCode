@@ -1,5 +1,5 @@
 import heapq
-data = open("/home/kirscheeh/repositories/AdventOfCode/inputs/2024/day09.txt").read().strip()
+data = open("inputs/2024/day09.txt").read().strip()
 
 def decode_part1(data:str) -> list:
     fileID = 0

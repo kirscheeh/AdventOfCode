@@ -24,9 +24,8 @@ for row, content in enumerate(data):
 def dijkstra(start, end, paths):
     distances = {node: float('inf') for node in paths}
     distances[start] = 0
-    
+    parents = {}
     pq = [(0, start, ">")]
-
 
     while pq:
         current_distance, current_node, current_facing = heapq.heappop(pq)
@@ -46,9 +45,31 @@ def dijkstra(start, end, paths):
             if distance < distances[next_position]:
                 distances[next_position] = distance
                 heapq.heappush(pq, (distance, next_position, facing))
+                
+            if distance <= distances[next_position]:
+                if not next_position in parents:
+                    parents[next_position] = []
+                parents[next_position].append(current_node)
 
+    return distances[end], parents
 
-    return distances[end]
-
-dist = dijkstra(start, end, frozenset(paths))
-print("Part 1", dist)
+def backtrack(parents, start, end):
+    pq = [x for x in parents[end]]
+    print(pq)
+    in_any=set()
+    index=0
+    while pq:
+        node = heapq.heappop(pq)
+        in_any.add(node)
+        if node == start:
+            return len(in_any)
+        
+        for parent in parents.get(node):
+            heapq.heappush(pq, parent)
+            
+        index+=1
+            
+    return -1           
+   
+dist, parents = dijkstra(start, end, frozenset(paths))
+print(backtrack(parents, start, end))
