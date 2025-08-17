@@ -9,3 +9,7 @@ path="src/day01.rs"
 [[bin]]
 name="day02"
 path="src/day02.rs"
+
+[[bin]]
+name="day02_generic"
+path="src/day02_generic.rs"
