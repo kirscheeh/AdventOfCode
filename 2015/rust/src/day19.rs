@@ -32,5 +32,6 @@ fn main () {
     }
 
     println!("Part 1: {}", replacements.len());
+    // part 2 was off-paper math
 
 }
