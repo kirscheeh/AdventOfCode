@@ -42,13 +42,11 @@ fn check_positions(loc: &mut HashSet<(i32, i32)>, start:(i32, i32), stop: (i32, 
             } 
             else {
                 loc.insert((start.0, y));  
-            }
-             
+            } 
         }
     }
     else { // vertical move
                 // get start and stop, index shuffling
-
         let (x1, x2) = if stop.0 < start.0 { (stop.0, start.0-1) } else {(start.0+1, stop.0)};
         
         for x in x1..=x2 {
@@ -71,6 +69,7 @@ fn move_it(pos: (i32, i32), direction: &Direction, steps: i32) -> (i32, i32) {
         Direction::West  => (pos.0 - steps, pos.1)
     }
 }
+
 fn main() {
     let contents = fs::read_to_string("../../inputs/2016/day01.txt")
         .expect("Should have been able to read the file");
