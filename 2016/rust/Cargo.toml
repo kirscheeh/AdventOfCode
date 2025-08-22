@@ -6,6 +6,7 @@ version = "0.1.0"
 csv = "1"
 itertools = "0.12"
 regex = "1.11.1"
+md5="0.8.0"
 
 [[bin]]
 name="day01"
@@ -26,3 +27,7 @@ path="src/day03.rs"
 [[bin]]
 name="day04"
 path="src/day04.rs"
+
+[[bin]]
+name="day05"
+path="src/day05.rs"
