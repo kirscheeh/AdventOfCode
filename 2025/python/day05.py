@@ -42,7 +42,6 @@ def connecting_intervals(rngs) -> list[tuple[int,int]]:
                 
                 new_range = set([rng for (index, rng) in enumerate(rngs) if not index in [index1, index2]])
                 new_range.add(new_tuple)
-                
                 break
             else:
                 continue 
