@@ -1,0 +1,67 @@
+data = read_boxes(junction_boxes)
+circuits = {(i, j, None) for i in data for j in data if i > j}
+
+for box1 in data:
+    for box2 in data:
+        if box1 == box2:
+            del circuits[(box1, box2)]
+        elif circuits[(box2, box1)]:
+            del circuits[(box1, box2)]
+        else:
+            circuits[(box1, box2)] = euclidian_distance(box1, box2)
+
+in_circuit = {box:False for box in data}
+circuits_index={box:len(data)+500+index for index, box in enumerate(data)}
+circuit_index_nr=0
+
+print(circuits[((216, 146, 977),(117, 168, 530))])
+print(sorted(list(circuits.values())))
+
+junctions_to_check = 10      
+#for hello in range(junctions_to_check):
+while not len(set(circuits_index.values())) == 1:
+    
+    smallest_distance = min(circuits, key=circuits.get)
+    box1, box2 = smallest_distance
+   
+    if in_circuit[box1] and not in_circuit[box2]:
+        
+        in_circuit[box2] = True
+        circuits_index[box2] = circuits_index[box1]
+    
+    elif in_circuit[box2] and not in_circuit[box1]:
+        
+        in_circuit[box1] = True
+        circuits_index[box1] = circuits_index[box2]
+    elif in_circuit[box2] and in_circuit[box1]:
+        if circuits_index[box1] == circuits_index[box2]:
+            pass
+        else:
+            nr1 = circuits_index[box1]
+            nr2 = circuits_index[box2]
+            
+            for box, nr in circuits_index.items():
+                if nr == nr1:
+                    circuits_index[box] = nr2
+        
+    else: # none in circuit box
+        in_circuit[box1] = True
+        in_circuit[box2] = True
+        
+        circuits_index[box1] = circuit_index_nr
+        circuits_index[box2] = circuit_index_nr
+        
+        circuit_index_nr += 1
+
+    del circuits[smallest_distance]
+    
+print(box1, box2)
+print(box1[0]*box2[0])
+input()
+different_circuits_nr = set(circuits_index.values())
+
+circuit_sizes = []
+for nr in different_circuits_nr:
+    circuit_sizes.append(list(circuits_index.values()).count(nr))
+        
+print(math.prod(sorted(circuit_sizes)[-3:]))
