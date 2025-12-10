@@ -1,3 +1,4 @@
 inputs/
 */rust/target/
 Cargo.lock
+.vscode/
